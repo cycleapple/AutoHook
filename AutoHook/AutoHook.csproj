@@ -2,7 +2,7 @@
 <Project Sdk="Dalamud.NET.Sdk/13.1.0">
     <PropertyGroup>
         <Authors>Det</Authors>
-        <Version>5.0.0.13</Version>
+        <Version>5.0.0.14</Version>
         <LangVersion>preview</LangVersion>
 		<GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
     </PropertyGroup>
