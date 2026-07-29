@@ -1,9 +1,10 @@
-﻿using System.Runtime.InteropServices;
-using Dalamud.Utility.Signatures;
-using FFXIVClientStructs.FFXIV.Client.Game.UI;
+﻿using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
+using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
 using Lumina.Excel.Sheets;
+using System.Runtime.InteropServices;
+using FishingState = AutoHook.Enums.FishingState;
 
 namespace AutoHook.SeFunctions;
 
@@ -12,6 +13,7 @@ public unsafe class BaitManager
     public BaitManager()
     {
         Svc.Hook.InitializeFromAttributes(this);
+        Address = Svc.SigScanner.GetStaticAddressFromSig("8B 0D ?? ?? ?? ?? 3B D9 75");
     }
 
     private delegate byte ExecuteCommandDelegate(int id, int unk1, uint baitId, int unk2, int unk3);
@@ -20,6 +22,7 @@ public unsafe class BaitManager
     private readonly ExecuteCommandDelegate _executeCommand = null!;
 
     private const int FishingManagerOffset = 0x70;
+    public IntPtr Address;
 
     internal FishingManagerStruct* FishingMan
     {
@@ -175,6 +178,32 @@ public unsafe class BaitManager
 
     public bool IsSwimbaitFull() => GetSwimbaitCount() >= 3;
     public bool IsSwimbaitEmpty() => GetSwimbaitCount() == 0;
+
+    /// <summary>
+    /// Checks if the current bait on the line is a moochable fish (swimbait case).
+    /// For normal mooching, Current stays as the original bait, so this will return false.
+    /// Use the isMooching parameter in GetCurrentBaitMoochId to handle normal mooching.
+    /// </summary>
+    public bool IsMooching() => GameRes.MoochableFish.Any(f => f.Id == Current);
+
+    /// <summary>
+    /// Gets the current bait/mooch ID on the line. Returns the fish ID if mooching/swimbait, otherwise returns the bait ID.
+    /// </summary>
+    /// <param name="fallbackId">Optional fallback ID (last catch) to use only when actually mooching</param>
+    /// <param name="isMooching">If actually mooching (mooch action was used)</param>
+    /// <returns>The current bait or mooch fish ID</returns>
+    public int GetCurrentBaitMoochId(int? fallbackId = null, bool isMooching = false)
+    {
+        var currentId = Current;
+
+        if (GameRes.Fishes.Any(f => f.Id == currentId))
+            return (int)currentId;
+
+        if (isMooching && fallbackId.HasValue && fallbackId.Value > 0 && GameRes.Fishes.Any(f => f.Id == fallbackId.Value))
+            return fallbackId.Value;
+
+        return (int)currentId;
+    }
 
     public enum ChangeBaitReturn
     {

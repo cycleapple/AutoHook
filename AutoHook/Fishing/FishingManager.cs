@@ -1,8 +1,8 @@
-using System.Diagnostics;
 using Dalamud.Hooking;
 using Dalamud.Plugin.Services;
 using ECommons.Throttlers;
 using FFXIVClientStructs.FFXIV.Client.Game;
+using System.Diagnostics;
 
 namespace AutoHook.Fishing;
 
@@ -112,17 +112,6 @@ public partial class FishingManager : IDisposable
         //Service.TaskManager.Enqueue(() => UseAutoCasts());
     }
 
-    private int GetCurrentBaitMoochId()
-    {
-        if (Service.BaitManager.CurrentSwimBait is { } fishId)
-            return (int)fishId;
-
-        if (_isMooching)
-            return _lastCatch?.Id ?? 0;
-
-        return (int)Service.BaitManager.Current;
-    }
-
     // The current config is updates two times: When we began fishing (to get the config based on the mooch/bait) and when we hooked the fish (in case the user updated their configs).
     private void UpdateStatusAndTimer()
     {
@@ -162,16 +151,21 @@ public partial class FishingManager : IDisposable
 
     public string GetPresetName()
     {
-        var customHook = Presets.SelectedPreset?.GetCfgById(GetCurrentBaitMoochId(), _isMooching);
+        var isMooching = Service.BaitManager.IsMooching() || _isMooching;
+        var currentBaitId = Service.BaitManager.GetCurrentBaitMoochId(_lastCatch?.Id, _isMooching);
 
-        var globalHook = _isMooching
+        HookConfig? customHook = null;
+        if (Presets.SelectedPreset != null)
+            customHook = Presets.SelectedPreset.GetCfgById(currentBaitId, isMooching);
+
+        var globalHook = isMooching
             ? Presets.DefaultPreset.ListOfMooch.FirstOrDefault()
             : Presets.DefaultPreset.ListOfBaits.FirstOrDefault();
 
         var presetName = customHook?.Enabled ?? false
             ? @$"{customHook.BaitFish.Name} ({Presets.SelectedPreset?.PresetName})"
             : globalHook?.Enabled ?? false
-                ? @$"{(_isMooching ? UIStrings.All_Mooches : UIStrings.All_Baits)} ({Presets.DefaultPreset.PresetName})"
+                ? @$"{(isMooching ? UIStrings.All_Mooches : UIStrings.All_Baits)} ({Presets.DefaultPreset.PresetName})"
                 : @"None";
 
         return presetName;
@@ -179,9 +173,14 @@ public partial class FishingManager : IDisposable
 
     public HookConfig GetHookCfg()
     {
-        var custom = Presets.SelectedPreset?.GetCfgById(GetCurrentBaitMoochId(), _isMooching);
+        var isMooching = Service.BaitManager.IsMooching() || _isMooching;
+        var currentBaitId = Service.BaitManager.GetCurrentBaitMoochId(_lastCatch?.Id, _isMooching);
 
-        var defaultHook = _isMooching
+        HookConfig? custom = null;
+        if (Presets.SelectedPreset != null)
+            custom = Presets.SelectedPreset.GetCfgById(currentBaitId, isMooching);
+
+        var defaultHook = isMooching
             ? Presets.DefaultPreset.ListOfMooch.FirstOrDefault()
             : Presets.DefaultPreset.ListOfBaits.FirstOrDefault();
 
@@ -194,8 +193,22 @@ public partial class FishingManager : IDisposable
     {
         var currentState = Service.BaitManager.FishingState;
 
-        if (!Service.Configuration.PluginEnabled || currentState == FishingState.NotFishing)
+        if (!Service.Configuration.PluginEnabled)
             return;
+
+        if (currentState == FishingState.NotFishing)
+        {
+            if (Service.Configuration.AutoStartFishing && 
+                EzThrottler.Throttle("AutoStartFishing", 1000))
+            {
+                var autoCastCfg = GetAutoCastCfg();
+                if (autoCastCfg.EnableAll && autoCastCfg.CastLine.IsAvailableToCast() && PlayerRes.IsCastAvailable())
+                {
+                    StartFishing();
+                }
+            }
+            return;
+        }
 
         if (currentState != FishingState.Quit && _lastStep.HasFlag(FishingSteps.Quitting))
         {
@@ -293,12 +306,10 @@ public partial class FishingManager : IDisposable
         _isMooching = mooching;
         _lureSuccess = false;
 
-        var baitname = MultiString.GetItemName(GetCurrentBaitMoochId());
+        // Only pass isMooching=true if the mooch action was actually used
+        var baitname = MultiString.GetItemName(Service.BaitManager.GetCurrentBaitMoochId(_lastCatch?.Id, _isMooching));
         if (!_isMooching)
-        {
-            _isMooching = Service.BaitManager.CurrentSwimBait != null;
-            Service.PrintDebug(@$"Started fishing with {(_isMooching ? @"Swimbait" : @"normal bait")}: {baitname}");
-        }
+            Service.PrintDebug(@$"Started fishing with {(Service.BaitManager.IsMooching() ? @"Swimbait/Mooch" : @"normal bait")}: {baitname}");
         else
             Service.PrintDebug(@$"Started mooching with {baitname}");
 
