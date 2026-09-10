@@ -28,6 +28,9 @@ namespace AutoHook.Resources.Localization {
         
         private static global::System.Globalization.CultureInfo resourceCulture;
         
+        internal static string BundledOceanPresets => ResourceManager.GetString("BundledOceanPresets", resourceCulture);
+        internal static string BundledOceanPresetsDescription => ResourceManager.GetString("BundledOceanPresetsDescription", resourceCulture);
+
         [global::System.Diagnostics.CodeAnalysis.SuppressMessageAttribute("Microsoft.Performance", "CA1811:AvoidUncalledPrivateCode")]
         internal UIStrings() {
         }

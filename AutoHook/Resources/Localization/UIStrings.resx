@@ -1573,4 +1573,6 @@ You may also use the command /ahstart to start. Try making a macro with it!</val
   <data name="GPlabel" xml:space="preserve">
     <value>GP</value>
   </data>
+  <data name="BundledOceanPresets" xml:space="preserve"><value>Bundled ocean fishing presets (API13)</value></data>
+  <data name="BundledOceanPresetsDescription" xml:space="preserve"><value>Archived presets for points, leveling, achievements and big fish. Available offline; import the presets you need. Select the correct route, bait, GP and spectral-current variant manually.</value></data>
 </root>

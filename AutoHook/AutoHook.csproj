@@ -2,7 +2,7 @@
 <Project Sdk="Dalamud.NET.Sdk/13.1.0">
     <PropertyGroup>
         <Authors>Det</Authors>
-        <Version>5.0.0.14</Version>
+        <Version>5.0.0.15</Version>
         <LangVersion>preview</LangVersion>
 		<GenerateErrorForMissingTargetingPacks>false</GenerateErrorForMissingTargetingPacks>
     </PropertyGroup>
@@ -13,6 +13,7 @@
         </None>
 		<EmbeddedResource Include="Assets\Fishy.png" />
 		<EmbeddedResource Include="Assets\Fishy_g.png" />
+        <EmbeddedResource Include="Resources\Presets\Ocean-Fishing.md" />
     </ItemGroup>
 
     <PropertyGroup Condition="'$([System.Runtime.InteropServices.RuntimeInformation]::IsOSPlatform($([System.Runtime.InteropServices.OSPlatform]::Linux)))'">

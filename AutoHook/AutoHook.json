@@ -4,10 +4,10 @@
     "Punchline": "Makes fishing less (or more) boring",
     "Description": "It hooks the fish for you, can you believe it?",
     "InternalName": "AutoHook",
-    "RepoUrl": "https://github.com/PunishXIV/AutoHook",
+    "RepoUrl": "https://github.com/cycleapple/AutoHook",
     "MinimumDalamudVersion": "13.0.0.0",
     "Tags": [ "Gathering", "Fishing" ],
     "AcceptsFeedback": false,
-    "Changelog": "Click the Changelog button to see whats new",
+    "Changelog": "API13：內建 67 個歷史海釣模板，可於社群模板頁離線匯入，不再依賴上游 Wiki 下載。",
     "IconURL": "https://s3.puni.sh/media/plugin/47/icon-k1slevjorpo.png"
 }

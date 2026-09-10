@@ -1573,4 +1573,6 @@
   <data name="WhenSwimbaitIsOut" xml:space="preserve">
     <value>暫養魚餌用盡時</value>
   </data>
+  <data name="BundledOceanPresets" xml:space="preserve"><value>內建海釣模板（API13）</value></data>
+  <data name="BundledOceanPresetsDescription" xml:space="preserve"><value>內建歷史版衝分、練等、成就及魚王模板，離線即可匯入。請依航線、魚餌、GP 與幻海流狀態手動選擇適用模板。</value></data>
 </root>

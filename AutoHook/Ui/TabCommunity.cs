@@ -29,6 +29,17 @@ public class TabCommunity : BaseTab
 
     public override void Draw()
     {
+        if (ImGui.CollapsingHeader(UIStrings.BundledOceanPresets, ImGuiTreeNodeFlags.DefaultOpen))
+        {
+            ImGui.TextWrapped(UIStrings.BundledOceanPresetsDescription);
+            using (ImRaii.PushId("BundledOceanPresets"))
+            {
+                foreach (var (category, presets) in BundledOceanPresets.Presets)
+                    DrawHeaderList(category, presets);
+            }
+        }
+        ImGui.Separator();
+
         ImGui.TextColored(ImGuiColors.DalamudYellow,
             UIStrings.CommunityDescription);
         using (ImRaii.Group())
