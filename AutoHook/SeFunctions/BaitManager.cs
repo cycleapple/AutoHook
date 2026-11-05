@@ -1,4 +1,4 @@
-﻿using Dalamud.Utility.Signatures;
+using Dalamud.Utility.Signatures;
 using FFXIVClientStructs.FFXIV.Client.Game.Event;
 using FFXIVClientStructs.FFXIV.Client.Game.UI;
 using FFXIVClientStructs.FFXIV.Client.Game.WKS;
@@ -90,7 +90,7 @@ public unsafe class BaitManager
     {
         get
         {
-            if (GetRow<TerritoryType>(Player.Territory) is { TerritoryIntendedUse.RowId: 60 })
+            if (GetRow<TerritoryType>(Player.Territory.RowId) is { TerritoryIntendedUse.RowId: 60 })
             {
                 var cosmicManager = WKSManager.Instance();
                 if (cosmicManager != null)

@@ -1,4 +1,4 @@
-﻿using Dalamud.Bindings.ImGui;
+using Dalamud.Bindings.ImGui;
 using Dalamud.Hooking;
 using Dalamud.Interface.Utility.Raii;
 using ECommons.Automation.NeoTaskManager;
@@ -127,7 +127,7 @@ public class TabDebug : BaseTab
             }
 
             if (ImGui.Button($"copy mooches"))
-                ImGui.SetClipboardText(string.Join("\n", FindRows<FishingBaitParameter>(x => x.Unknown0 != 0 && GetRow<Item>(x.Unknown0)?.ItemUICategory.RowId != 33).Select(x => $"[{x.Unknown0}] {GetRow<Item>(x.Unknown0)?.Singular}")));
+                ImGui.SetClipboardText(string.Join("\n", FindRows<FishingBaitParameter>(x => x.Item.RowId != 0 && GetRow<Item>(x.Item.RowId)?.ItemUICategory.RowId != 33).Select(x => $"[{x.Item.RowId}] {GetRow<Item>(x.Item.RowId)?.Singular}")));
 
             if (ImGui.CollapsingHeader("Get Wiki presets", ImGuiTreeNodeFlags.DefaultOpen))
             {

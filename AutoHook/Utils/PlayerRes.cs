@@ -193,7 +193,7 @@ public static class PlayerRes
         if (_blockCasting)
             return;
 
-        if (actionType is ActionType.Action or ActionType.Ability)
+        if (actionType is ActionType.Action or ActionType.EventAction)
         {
             if (!ActionTypeAvailable(actionId, actionType))
                 return;

@@ -1,4 +1,4 @@
-﻿using System.IO;
+using System.IO;
 using System.Text.Json;
 using Dalamud.Bindings.ImGui;
 using Lumina.Excel.Sheets;
@@ -28,7 +28,7 @@ public static class GameRes
         Fishes = FindRows<FishParameter>(f => f.Item.RowId is not 0 and < 1000000)
             .Select(f => new BaitFishClass(f)).GroupBy(f => f.Id).Select(group => group.First()).ToList() ?? [];
 
-        MoochableFish = FindRows<FishingBaitParameter>(x => x.Unknown0 != 0 && GetRow<Item>(x.Unknown0)?.ItemUICategory.RowId != 33).Select(f => new BaitFishClass(f.Unknown0)).ToList() ?? [];
+        MoochableFish = FindRows<FishingBaitParameter>(x => x.Item.RowId != 0 && GetRow<Item>(x.Item.RowId)?.ItemUICategory.RowId != 33).Select(f => new BaitFishClass(f.Item.RowId)).ToList() ?? [];
 
         try
         {
